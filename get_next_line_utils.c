@@ -6,7 +6,7 @@
 /*   By: rlevilla <rlevilla@student.42lausanne.ch>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/06 17:00:39 by rlevilla          #+#    #+#             */
-/*   Updated: 2022/12/06 17:34:42 by rlevilla         ###   ########.fr       */
+/*   Updated: 2022/12/09 20:58:47 by rlevilla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,25 +74,34 @@ char	*gnl_strjoin(char *temp, char *buf)
 char	*search_line(int fd, char *temp)
 {
 	ssize_t	bytes_read;
+	//ssize_t	count;
 	char	*buf;
 
 	bytes_read = 1;
+	//count = 0;
 	if (!temp)
 		temp = gnl_calloc(1);
 	buf = gnl_calloc(BUFFER_SIZE + 1);
 	while (bytes_read > 0)
 	{
 		bytes_read = read(fd, buf, BUFFER_SIZE);
-		if (bytes_read == 0)
+		printf("BUF =%s\n", buf);
+		if (bytes_read == -1)
 		{
 			free(buf);
 			free(temp);
 			return (NULL);
 		}
-		temp = gnl_strjoin(temp, buf);
+		if (bytes_read != 0)
+		{
+			temp = gnl_strjoin(temp, buf);
+			//count++;
+		}
 		if (check_c(temp) != -1)
 			break ;
 	}
 	free(buf);
+	/*if (count == 0)
+		return (NULL);*/
 	return (temp);
 }

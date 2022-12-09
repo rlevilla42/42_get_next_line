@@ -6,11 +6,18 @@
 /*   By: rlevilla <rlevilla@student.42lausanne.ch>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/06 16:59:42 by rlevilla          #+#    #+#             */
-/*   Updated: 2022/12/06 23:22:22 by rlevilla         ###   ########.fr       */
+/*   Updated: 2022/12/09 20:23:18 by rlevilla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+/*
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+# define BUFFER_SIZE 42
 
 ssize_t	ft_strlen(char *str)
 {
@@ -74,18 +81,16 @@ char	*gnl_strjoin(char *temp, char *buf)
 char	*search_line(int fd, char *temp)
 {
 	ssize_t	bytes_read;
-	char	*buf;
+	char	buf[BUFFER_SIZE + 1];
 
 	bytes_read = 1;
 	if (!temp)
 		temp = gnl_calloc(1);
-	buf = gnl_calloc(BUFFER_SIZE + 1);
 	while (bytes_read > 0)
 	{
 		bytes_read = read(fd, buf, BUFFER_SIZE);
-		if (bytes_read == 0)
+		if (bytes_read == -1)
 		{
-			free(buf);
 			free(temp);
 			return (NULL);
 		}
@@ -93,16 +98,17 @@ char	*search_line(int fd, char *temp)
 		if (check_c(temp) != -1)
 			break ;
 	}
-	free(buf);
 	return (temp);
 }
-
+*/
 char	*gnl_extract_line(char *temp)
 {
 	ssize_t	i;
 	char	*str;
 
 	i = 0;
+	if (temp[0] == '\0')
+		return (NULL);
 	while (temp[i])
 	{
 		if (temp[i++] == '\n')
@@ -153,16 +159,20 @@ char	*gnl_strndup(char *temp)
 char	*gnl_strchr(char *temp)
 {
 	ssize_t	i;
+	char	*res;
 
 	i = 0;
 	while (temp[i])
 	{
 		if (temp[i] == '\n')
 		{
-			return (gnl_strndup(&temp[++i]));
+			res = gnl_strndup(&temp[++i]);
+			free(temp);
+			return (res);
 		}
 		i++;
 	}
+	free(temp);
 	return (NULL);
 }
 
@@ -173,6 +183,7 @@ char	*get_next_line(int fd)
 
 	if (BUFFER_SIZE <= 0 || fd < 0)
 		return (NULL);
+	//if (!temp || check_c(temp) == -1)
 	temp = search_line(fd, temp);
 	if (temp == NULL)
 	{
@@ -186,35 +197,44 @@ char	*get_next_line(int fd)
 
 int main(void)
 {
-	int	fd;
+	int fd;
+	char	*line;
 
-	fd = open("41_no_nl.txt", O_RDONLY);
-	printf("GET NEXT LINE =%s", get_next_line(fd));
-	printf("GET NEXT LINE =%s", get_next_line(fd));
-	printf("GET NEXT LINE =%s", get_next_line(fd));
-	printf("GET NEXT LINE =%s", get_next_line(fd));
+	fd = open("43_no_nl.txt", O_RDONLY);
+	line = get_next_line(fd);
+	while (line != NULL)
+	{
+		printf("%s", line);
+		free(line);
+		line = get_next_line(fd);
+	}
+	printf("HORS BOUCLE =%s", get_next_line(fd));
+	printf("HORS BOUCLE =%s", get_next_line(fd));
+	printf("HORS BOUCLE =%s", get_next_line(fd));
+	close(fd);
+	return (0);
 }
+
 /*
 int main(void)
 {
 	int fd;
 	//int	i;
 
-	fd = open("gnl.txt", O_RDONLY);
+	fd = open("41_with_nl.txt", O_RDONLY);
 	//i = 0;
-	printf("GET NEXT LINE =%s", get_next_line(fd));
-	printf("GET NEXT LINE =%s", get_next_line(fd));
-	printf("GET NEXT LINE =%s", get_next_line(fd));
-	printf("GET NEXT LINE =%s", get_next_line(fd));
-	printf("GET NEXT LINE =%s", get_next_line(fd));
-	printf("GET NEXT LINE =%s", get_next_line(fd));
-	printf("GET NEXT LINE =%s", get_next_line(fd));
-	printf("GET NEXT LINE =%s", get_next_line(fd));
-	printf("GET NEXT LINE =%s", get_next_line(fd));
-	printf("GET NEXT LINE =%s", get_next_line(fd));
-	printf("GET NEXT LINE =%s", get_next_line(fd));
-	printf("GET NEXT LINE =%s", get_next_line(fd));
-	printf("GET NEXT LINE =%s", get_next_line(fd));
+	printf("%s", get_next_line(fd));
+	printf("%s", get_next_line(fd));
+	printf("%s", get_next_line(fd));
+	printf("%s", get_next_line(fd));
+	printf("%s", get_next_line(fd));
+	printf("%s", get_next_line(fd));
+	printf("%s", get_next_line(fd));
+	printf("%s", get_next_line(fd));
+	printf("%s", get_next_line(fd));
+	printf("%s", get_next_line(fd));
+	printf("%s", get_next_line(fd));
+	printf("%s", get_next_line(fd));
 	return (0);
 }
 */
