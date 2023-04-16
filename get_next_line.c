@@ -87,6 +87,20 @@ char	*get_next_line(int fd)
 	return (gnl);
 }
 /*
+int	main(void)
+{
+	int fd = open("gnl.txt", O_RDONLY);
+	char	*line = get_next_line(fd);
+
+	while (line != NULL)
+	{
+		printf("%s", line);
+		line = get_next_line(fd);
+	}
+	close(fd);
+}
+*/
+/*
 int main(void)
 {
 	int fd = open("fullnl.txt", O_RDONLY);
